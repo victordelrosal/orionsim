@@ -25,6 +25,9 @@
             --success-rgb: 56, 178, 172;
             --warning-rgb: 237, 137, 54;
             --error-rgb: 229, 62, 62;
+            --success-bg: rgba(56, 178, 172, 0.15);
+            --warning-bg: rgba(237, 137, 54, 0.15);
+            --error-bg: rgba(229, 62, 62, 0.15);
         }
         
         * {
@@ -216,6 +219,21 @@
             transform: translateY(0);
         }
         
+        #result.success {
+            background-color: var(--success-bg);
+            border-left: 4px solid var(--success);
+        }
+        
+        #result.warning {
+            background-color: var(--warning-bg);
+            border-left: 4px solid var(--warning);
+        }
+        
+        #result.error {
+            background-color: var(--error-bg);
+            border-left: 4px solid var(--error);
+        }
+        
         #result h2 {
             color: var(--primary);
             margin-top: 0;
@@ -365,7 +383,7 @@
                 outcomeClass = "error";
             } else if (total <= 3) {
                 ending = "Struggling: The initiative faced significant challenges. While there were some efforts, the lack of leadership involvement or a traditional mindset hindered progress. OrionCorp is struggling to keep up with industry changes.";
-                outcomeClass = "warning";
+                outcomeClass = "error";
             } else if (total <= 5) {
                 ending = "Mixed Results: The initiative had some success but also notable shortcomings. Perhaps leadership was involved, but the strategy was not fully practical, or the mindset was not fully innovative. OrionCorp sees some benefits but misses out on full potential.";
                 outcomeClass = "warning";
@@ -382,19 +400,13 @@
                 <h2><i class="fas fa-chart-line"></i> Simulation Outcome</h2>
                 <p>${ending}</p>
             `;
-            resultElement.style.borderLeft = `4px solid var(--${outcomeClass})`;
-            resultElement.classList.add('show');
+            
+            // Remove any existing classes and add the new outcome class
+            resultElement.classList.remove('show', 'success', 'warning', 'error');
+            resultElement.classList.add('show', outcomeClass);
             
             // Scroll to result
             resultElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            
-            // Add animation to result
-            setTimeout(() => {
-                resultElement.style.backgroundColor = `rgba(var(--${outcomeClass}-rgb), 0.05)`;
-                setTimeout(() => {
-                    resultElement.style.backgroundColor = 'var(--bg-card)';
-                }, 500);
-            }, 100);
         });
     </script>
 </body>
