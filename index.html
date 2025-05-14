@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrionCorp GenAI Adoption Simulation</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3a6cf4;
+            --primary-dark: #2a5bd7;
+            --secondary: #5e35b1;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --bg-light: #f7fafc;
+            --bg-card: #ffffff;
+            --shadow-sm: 0 2px 10px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+            --success: #38b2ac;
+            --warning: #ed8936;
+            --error: #e53e3e;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-weight: 700;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+        
+        p.intro {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+        
+        .slider-container {
+            background: var(--bg-card);
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .slider-container:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .slider-container label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .slider-container label::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        /* Custom slider styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        input[type="range"]:focus {
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            background: var(--primary-dark);
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-top: -0.5rem;
+        }
+        
+        .slider-value {
+            position: absolute;
+            right: 1.8rem;
+            top: 1.8rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(58, 108, 244, 0.1);
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+        }
+        
+        button {
+            display: block;
+            margin: 2.5rem auto;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(58, 108, 244, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(58, 108, 244, 0.25);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to right,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: all 0.6s ease;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        #result {
+            margin-top: 2.5rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.6s ease;
+        }
+        
+        #result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #result h2 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.5px;
+        }
+        
+        #result h2::before {
+            content: "\f0eb";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        #result p {
+            line-height: 1.7;
+            color: var(--text-dark);
+        }
+        
+        .container {
+            position: relative;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(58, 108, 244, 0.05), rgba(94, 53, 177, 0.05));
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+        
+        .logo i {
+            margin-right: 8px;
+            color: var(--secondary);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .slider-container {
+                padding: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-robot"></i> OrionCorp GenAI
+        </div>
+        <h1>GenAI Adoption Simulation</h1>
+        <p class="intro">Welcome to the OrionCorp GenAI Adoption Simulation. Adjust the sliders below to make decisions on key variables and see how they shape the outcome of OrionCorp's generative AI initiative.</p>
+    </div>
+    
+    <div class="slider-container">
+        <label for="leadership">Leadership Involvement</label>
+        <span class="slider-value" id="leadership-value">Moderately involved</span>
+        <input type="range" id="leadership" min="0" max="2" step="1" value="1">
+        <div class="slider-labels">
+            <span>Hands-off</span>
+            <span>Moderately involved</span>
+            <span>Fully engaged</span>
+        </div>
+    </div>
+    
+    <div class="slider-container">
+        <label for="strategy">Approach to Strategy Development</label>
+        <span class="slider-value" id="strategy-value">Balanced approach</span>
+        <input type="range" id="strategy" min="0" max="2" step="1" value="1">
+        <div class="slider-labels">
+            <span>Analysis paralysis</span>
+            <span>Balanced approach</span>
+            <span>Decisive action</span>
+        </div>
+    </div>
+    
+    <div class="slider-container">
+        <label for="implementation">Implementation Practicality</label>
+        <span class="slider-value" id="implementation-value">Mixed</span>
+        <input type="range" id="implementation" min="0" max="2" step="1" value="1">
+        <div class="slider-labels">
+            <span>Theoretical</span>
+            <span>Mixed</span>
+            <span>Practical</span>
+        </div>
+    </div>
+    
+    <div class="slider-container">
+        <label for="mindset">Mindset Towards GenAI</label>
+        <span class="slider-value" id="mindset-value">Open to change</span>
+        <input type="range" id="mindset" min="0" max="2" step="1" value="1">
+        <div class="slider-labels">
+            <span>Traditional</span>
+            <span>Open to change</span>
+            <span>Innovative</span>
+        </div>
+    </div>
+    
+    <button id="simulate"><i class="fas fa-play-circle"></i> Run Simulation</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        // Update slider value displays
+        const sliders = ['leadership', 'strategy', 'implementation', 'mindset'];
+        const valueTexts = [
+            ['Hands-off', 'Moderately involved', 'Fully engaged'],
+            ['Analysis paralysis', 'Balanced approach', 'Decisive action'],
+            ['Theoretical', 'Mixed', 'Practical'],
+            ['Traditional', 'Open to change', 'Innovative']
+        ];
+        
+        sliders.forEach((slider, index) => {
+            const element = document.getElementById(slider);
+            element.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                document.getElementById(`${slider}-value`).textContent = valueTexts[index][value];
+            });
+        });
+        
+        document.getElementById('simulate').addEventListener('click', function() {
+            const leadership = parseInt(document.getElementById('leadership').value);
+            const strategy = parseInt(document.getElementById('strategy').value);
+            const implementation = parseInt(document.getElementById('implementation').value);
+            const mindset = parseInt(document.getElementById('mindset').value);
+            const total = leadership + strategy + implementation + mindset;
+            let ending;
+            let outcomeClass;
+
+            if (total <= 1) {
+                ending = "Disaster: The GenAI initiative completely failed. Leadership was disengaged, strategy was stuck in analysis, implementation was impractical, and the mindset was outdated. OrionCorp wasted resources and fell behind competitors.";
+                outcomeClass = "error";
+            } else if (total <= 3) {
+                ending = "Struggling: The initiative faced significant challenges. While there were some efforts, the lack of leadership involvement or a traditional mindset hindered progress. OrionCorp is struggling to keep up with industry changes.";
+                outcomeClass = "warning";
+            } else if (total <= 5) {
+                ending = "Mixed Results: The initiative had some success but also notable shortcomings. Perhaps leadership was involved, but the strategy was not fully practical, or the mindset was not fully innovative. OrionCorp sees some benefits but misses out on full potential.";
+                outcomeClass = "warning";
+            } else if (total <= 7) {
+                ending = "Promising: The initiative is on a good path. With strong leadership, a clear strategy, practical implementation, and an innovative mindset, OrionCorp is seeing positive results and is competitive.";
+                outcomeClass = "success";
+            } else {
+                ending = "Breakthrough: OrionCorp has successfully integrated GenAI, leading the industry with innovative applications, high productivity, and a strong competitive advantage.";
+                outcomeClass = "success";
+            }
+
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = `
+                <h2><i class="fas fa-chart-line"></i> Simulation Outcome</h2>
+                <p>${ending}</p>
+            `;
+            resultElement.style.borderLeft = `4px solid var(--${outcomeClass})`;
+            resultElement.classList.add('show');
+            
+            // Scroll to result
+            resultElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // Add animation to result
+            setTimeout(() => {
+                resultElement.style.backgroundColor = `rgba(var(--${outcomeClass}-rgb), 0.05)`;
+                setTimeout(() => {
+                    resultElement.style.backgroundColor = 'var(--bg-card)';
+                }, 500);
+            }, 100);
+        });
+    </script>
+</body>
+</html>
